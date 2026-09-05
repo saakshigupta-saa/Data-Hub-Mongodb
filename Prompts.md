@@ -1,130 +1,172 @@
-# AI Prompt Log — Data Hub
+# AI Prompt Log — Data Hub MongoDB
 
-This document records the use of AI assistance during the development of the Data Hub REST API project.
+This document records the use of AI assistance during the development of the Data Hub REST API project with MongoDB Atlas.
 
-AI assistance was used primarily for **concept explanation, debugging, code-structure guidance, and troubleshooting**. The project was implemented, tested, and verified locally using Node.js, Express.js, and Thunder Client.
 
-## Prompt 1 — Express Server Setup
 
-**Purpose:** Understand how to initialize an Express server and configure a port.
+## Prompt 1 — MongoDB Atlas Setup
+
+**Purpose:** Understand how to provision a MongoDB Atlas database for the project.
 
 **Prompt:**
 
-> Explain how to create a basic Node.js Express server that listens on port 5000 and returns a JSON response from a root route.
+> Explain how to create a free MongoDB Atlas cluster and connect it to my existing Node.js Express project.
 
-**Use:** Understanding Express application initialization and port configuration.
+**Use:** Understanding cloud database provisioning and MongoDB Atlas configuration.
 
 ---
 
-## Prompt 2 — REST Route Structure
+## Prompt 2 — Mongoose Installation and Setup
 
-**Purpose:** Understand REST endpoint organization.
+**Purpose:** Understand how to use Mongoose as an ODM.
 
 **Prompt:**
 
-> Explain how to structure GET, POST, PUT, and DELETE routes for a blog resource using Express Router.
+> Explain how to install Mongoose and connect my Express server to MongoDB Atlas using a Mongoose connection.
 
-**Use:** Understanding REST architecture and route separation.
+**Use:** Understanding ODM setup and database connection.
 
 ---
 
-## Prompt 3 — In-Memory CRUD
+## Prompt 3 — Environment Variables
 
-**Purpose:** Understand how to implement CRUD operations using a JavaScript array.
+**Purpose:** Understand how to securely store the MongoDB connection string.
 
 **Prompt:**
 
-> Explain how an Express API can use an in-memory array as a temporary database and perform create, read, update, and delete operations using route parameters.
+> Explain how to store my MongoDB Atlas connection string in a .env file and load it into my Node.js Express application.
 
-**Use:** Understanding CRUD logic and request parameters.
+**Use:** Understanding environment variables and keeping database credentials out of source code.
 
 ---
 
-## Prompt 4 — PUT Route Debugging
+## Prompt 4 — MongoDB Connection Debugging
 
-**Purpose:** Debug a PUT endpoint returning `Cannot PUT /posts/1`.
+**Purpose:** Debug the MongoDB Atlas DNS/SRV connection error.
 
 **Prompt:**
 
-> My Express server returns `Cannot PUT /posts/1`. Explain what this error means and how to check whether the route is registered correctly.
+> My MongoDB Atlas connection is giving a DNS/SRV error. Explain what the error means and how I can troubleshoot the connection.
 
-**Use:** Debugging route registration and Express Router configuration.
+**Use:** Troubleshooting DNS resolution and MongoDB Atlas connectivity.
 
 ---
 
-## Prompt 5 — Request Body Parsing
+## Prompt 5 — Post Mongoose Schema
 
-**Purpose:** Understand `req.body`.
+**Purpose:** Understand how to create a strict Mongoose schema for posts.
 
 **Prompt:**
 
-> Explain how express.json() works and how req.body can be used to read JSON data sent in a POST or PUT request.
+> Explain how to create a Mongoose Post schema with title as String, content as String, and createdAt as Date, including required fields and a default date.
 
-**Use:** Understanding JSON request handling.
+**Use:** Understanding Mongoose schemas, data types, validation, and defaults.
 
 ---
 
-## Prompt 6 — Custom Middleware
+## Prompt 6 — MongoDB CRUD
 
-**Purpose:** Understand Express middleware.
+**Purpose:** Replace the old in-memory array with MongoDB operations.
 
 **Prompt:**
 
-> Explain how to create custom Express middleware that logs the HTTP method, URL, and timestamp for every incoming request.
+> Explain how to replace my in-memory blog post array with MongoDB using Mongoose and implement POST, GET, PUT, and DELETE operations.
 
-**Use:** Implementing the sprint's custom logging middleware.
+**Use:** Understanding database-backed CRUD operations.
 
 ---
 
-## Prompt 7 — Mock Authentication
+## Prompt 7 — Mongoose CRUD Debugging
 
-**Purpose:** Understand authentication scaffolding.
+**Purpose:** Understand Mongoose methods used for CRUD operations.
 
 **Prompt:**
 
-> Explain how to create a simple POST /login Express endpoint that validates username and password fields and returns a mock JWT-style token for demonstration purposes.
+> Explain how Post.create(), Post.find(), Post.findByIdAndUpdate(), and Post.findByIdAndDelete() work in Mongoose and when each method should be used.
 
-**Use:** Implementing the sprint's authentication scaffolding.
+**Use:** Understanding MongoDB CRUD methods through Mongoose.
 
 ---
 
-## Prompt 8 — Render Deployment
+## Prompt 8 — User Schema and Relationship
 
-**Purpose:** Understand deployment requirements for an Express server.
+**Purpose:** Understand how to create a relationship between users and posts.
 
 **Prompt:**
 
-> Explain how to prepare an Express Node.js server for deployment on Render, including the use of process.env.PORT and the server start command.
+> Explain how to create a User Mongoose schema and connect a Post document to a User using authorId and an ObjectId reference.
 
-**Use:** Deployment preparation and troubleshooting.
+**Use:** Understanding MongoDB document relationships and Mongoose references.
 
 ---
 
-## Prompt 9 — API Testing
+## Prompt 9 — Mongoose Populate
 
-**Purpose:** Understand how to verify REST API endpoints.
+**Purpose:** Understand how to retrieve author information along with a post.
 
 **Prompt:**
 
-> Explain how to test GET, POST, PUT, DELETE, and login endpoints using Thunder Client and what responses should be expected.
+> Explain how Mongoose populate() works and how I can populate authorId in my posts to return the related user information.
 
-**Use:** API quality assurance and endpoint verification.
+**Use:** Understanding referenced documents and data hydration with Mongoose.
+
+---
+
+## Prompt 10 — Recent Posts
+
+**Purpose:** Implement the advanced recent-posts requirement.
+
+**Prompt:**
+
+> Explain how to create a route that returns the three most recent posts using Mongoose sort() and limit(), and make sure it does not conflict with the /posts/:id route.
+
+**Use:** Implementing sorting, limiting, and route ordering.
+
+---
+
+## Prompt 11 — API Testing
+
+**Purpose:** Understand how to verify the MongoDB-backed API.
+
+**Prompt:**
+
+> Explain how to test my MongoDB CRUD API, user creation, author relationship, populate functionality, and recent posts endpoint using Postman.
+
+**Use:** API quality assurance and database verification.
+
+---
+
+## Prompt 12 — Git and GitHub
+
+**Purpose:** Understand how to push the completed sprint project to a new repository.
+
+**Prompt:**
+
+> Explain how to create a new GitHub repository, change the existing Git remote, and push my completed project to the new repository.
+
+**Use:** Repository management and version control.
 
 ---
 
 ## Development Notes
 
-AI assistance was used as a development support tool. The project was independently run and tested in the local development environment.
+AI assistance was used as a development support tool for **learning, debugging, troubleshooting, and understanding implementation decisions**.
+
+The project was independently run and tested in the local development environment.
 
 Testing included:
 
+* POST `/posts`
 * GET `/posts`
 * GET `/posts/:id`
-* POST `/posts`
 * PUT `/posts/:id`
 * DELETE `/posts/:id`
-* POST `/login`
+* POST `/users`
+* MongoDB User–Post relationship
+* Mongoose `.populate()`
+* GET `/posts/recent`
 * Invalid request scenarios
-* Custom middleware logging
+* MongoDB Atlas connection
+* API responses using Postman
 
-The API was verified using Thunder Client before deployment preparation.
+The API was verified locally with MongoDB Atlas before the final GitHub submission.
