@@ -1,29 +1,31 @@
-# Data Hub — RESTFUL API Server
+# The Data Hub API
 
-A backend REST API built with **Node.js and Express.js** as part of the Fullstack Developer sprint.
+A RESTful API built with **Node.js, Express.js, MongoDB, and Mongoose** for managing blog posts and users.
 
-The Data Hub demonstrates how a backend server receives HTTP requests, processes data, performs CRUD operations, and returns JSON responses.
+The project demonstrates how to move from temporary in-memory data storage to a persistent **MongoDB Atlas** database using Mongoose ODM.
 
 ## 🚀 Features
 
-* Express.js REST API
-* CRUD operations for blog posts
-* In-memory data storage
-* Custom request logging middleware
-* Mock authentication endpoint
-* Mock JWT token generation
-* JSON request-body parsing
-* Proper HTTP status codes
-* Tested using Thunder Client
+* RESTful API architecture
+* MongoDB Atlas cloud database
+* Mongoose ODM
+* CRUD operations for posts
+* User creation
+* Post and User relationship using `authorId`
+* `.populate()` for author details
+* Top 3 most recent posts endpoint
+* Request logging middleware
+* Environment variables for secure database configuration
+* JSON request and response handling
 
 ## 🛠️ Tech Stack
 
-* Node.js
-* Express.js
-* JavaScript
-* REST API
-* Thunder Client
-* Git & GitHub
+* **Node.js**
+* **Express.js**
+* **MongoDB Atlas**
+* **Mongoose**
+* **dotenv**
+* **Postman** for API testing
 
 ## 📁 Project Structure
 
@@ -36,24 +38,28 @@ data-hub/
 ├── middleware/
 │   └── logger.js
 │
+├── models/
+│   ├── Post.js
+│   └── User.js
+│
 ├── routes/
+│   ├── authRoutes.js
 │   ├── postRoutes.js
-│   └── authRoutes.js
+│   └── userRoutes.js
 │
 ├── .gitignore
-├── Prompts.md
-├── README.md
 ├── package.json
 ├── package-lock.json
+├── Prompts.md
 └── server.js
 ```
 
 ## ⚙️ Installation
 
-Clone the repository and open the project directory:
+Clone the repository and move into the project directory:
 
 ```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
+git clone <your-repository-url>
 cd data-hub
 ```
 
@@ -63,9 +69,19 @@ Install dependencies:
 npm install
 ```
 
-## ▶️ Running the Server
+## 🔐 Environment Variables
 
-Start the server with:
+Create a `.env` file in the project root:
+
+```env
+MONGODB_URI=your_mongodb_connection_string
+```
+
+Never commit the `.env` file to GitHub.
+
+## ▶️ Run the Server
+
+Start the server using:
 
 ```bash
 node server.js
@@ -77,170 +93,117 @@ The API runs locally on:
 http://localhost:5000
 ```
 
-You should see:
-
-```text
-Server running on port 5000
-```
-
-## 🔗 API Endpoints
+## 📌 API Endpoints
 
 ### Posts
 
-| Method | Endpoint     | Description       |
-| ------ | ------------ | ----------------- |
-| GET    | `/posts`     | Get all posts     |
-| GET    | `/posts/:id` | Get a post by ID  |
-| POST   | `/posts`     | Create a new post |
-| PUT    | `/posts/:id` | Update a post     |
-| DELETE | `/posts/:id` | Delete a post     |
+| Method | Endpoint        | Description                 |
+| ------ | --------------- | --------------------------- |
+| GET    | `/posts`        | Get all posts               |
+| GET    | `/posts/:id`    | Get a post by ID            |
+| POST   | `/posts`        | Create a new post           |
+| PUT    | `/posts/:id`    | Update a post               |
+| DELETE | `/posts/:id`    | Delete a post               |
+| GET    | `/posts/recent` | Get top 3 most recent posts |
+
+### Users
+
+| Method | Endpoint | Description       |
+| ------ | -------- | ----------------- |
+| POST   | `/users` | Create a new user |
 
 ### Authentication
 
-| Method | Endpoint | Description                     |
-| ------ | -------- | ------------------------------- |
-| POST   | `/login` | Mock login and token generation |
+| Method | Endpoint | Description    |
+| ------ | -------- | -------------- |
+| POST   | `/login` | Login endpoint |
 
-## 📝 Example POST Request
+## 📝 Create a Post
 
-**POST**
-
-```text
-http://localhost:5000/posts
-```
-
-Request body:
+Example request:
 
 ```json
 {
-  "title": "My First Post",
-  "content": "Learning REST APIs with Express.",
-  "author": "Sakshi"
+  "title": "MongoDB Post",
+  "content": "This post is stored in MongoDB Atlas.",
+  "authorId": "USER_ID"
 }
 ```
 
-Example response:
+## 👤 Create a User
+
+Example request:
 
 ```json
 {
-  "message": "Post created successfully",
-  "post": {
-    "id": 1,
-    "title": "My First Post",
-    "content": "Learning REST APIs with Express.",
-    "author": "Sakshi"
+  "name": "Sakshi Gupta",
+  "email": "sakshi@example.com"
+}
+```
+
+## 🔗 Post-User Relationship
+
+Each post contains an `authorId` that references a User document.
+
+Mongoose `.populate()` is used to return the author's details along with the post.
+
+Example response structure:
+
+```json
+{
+  "title": "Post With Author",
+  "content": "This post is connected to a user.",
+  "authorId": {
+    "_id": "USER_ID",
+    "name": "Sakshi Gupta",
+    "email": "sakshi@example.com"
   }
 }
 ```
 
-## 🔐 Login Endpoint
+## 🕒 Recent Posts
 
-**POST**
-
-```text
-http://localhost:5000/login
-```
-
-Request body:
-
-```json
-{
-  "username": "sakshi",
-  "password": "123456"
-}
-```
-
-The endpoint returns a mock JWT-style token for demonstration purposes.
-
-> Note: This is authentication scaffolding for the sprint and is not a production authentication system.
-
-## 📋 Middleware
-
-The project includes custom request logging middleware.
-
-Example:
+The following endpoint returns the three most recently created posts:
 
 ```text
-[GET] /posts - 06:45 PM
-[POST] /posts - 06:46 PM
-[PUT] /posts/1 - 06:47 PM
-[DELETE] /posts/1 - 06:48 PM
+GET /posts/recent
 ```
 
-The middleware logs:
-
-* HTTP method
-* Requested URL
-* Request timestamp
+Posts are sorted using `createdAt` in descending order.
 
 ## 🧪 API Testing
 
-The API was tested using **Thunder Client**.
+The API can be tested using **Postman**.
 
-CRUD operations tested:
+Tested operations include:
 
-* Create a post
-* Retrieve all posts
-* Retrieve a post by ID
-* Update a post
-* Delete a post
-* Test missing post IDs
-* Test login
-* Test invalid login payloads
+* Creating users
+* Creating posts
+* Reading posts
+* Updating posts
+* Deleting posts
+* Populating author information
+* Fetching recent posts
 
-## 💾 Data Storage
+## 🔒 Security
 
-The project currently uses an **in-memory JavaScript array** as required by the sprint.
+* MongoDB credentials are stored in `.env`.
+* `.env` is excluded from Git using `.gitignore`.
+* Database credentials should never be committed to the repository.
 
-```js
-let blogPosts = [];
-```
+## 📚 Learning Objectives
 
-Because the data is stored in memory, all posts are cleared whenever the server restarts.
+This project focuses on:
 
-
-
-The application uses:
-
-```js
-process.env.PORT || 5000
-```
-
-so the deployment platform can provide its own port.
-
-## 🎯 Sprint Requirements Completed
-
-### Phase 1 — Server Initialization & Route Scaffolding
-
-* Node.js environment
-* Express installation
-* Port configuration
-* REST endpoint scaffolding
-
-### Phase 2 — In-Memory CRUD
-
-* In-memory blog post storage
-* POST implementation
-* GET implementation
-* PUT implementation
-* DELETE implementation
-* API testing
-
-### Phase 3 — Middleware & Authentication
-
-* Custom request logger
-* HTTP method logging
-* URL logging
-* Timestamp logging
-* `/login` endpoint
-* Mock JWT token
+1. MongoDB Atlas cloud database provisioning
+2. Mongoose ODM
+3. Schema design
+4. Persistent CRUD operations
+5. Referencing documents using ObjectId
+6. Mongoose `.populate()`
+7. Sorting and limiting MongoDB query results
+8. API testing with Postman
 
 ## 👩‍💻 Author
 
 **Sakshi Gupta**
-
----
-
-## 📄 License
-
-This project was created for educational and sprint-development purposes.

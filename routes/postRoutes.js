@@ -1,89 +1,129 @@
 const express = require("express");
-const blogPosts = require("../data/posts");
+const Post = require("../models/Post");
 
 const router = express.Router();
+// GET /posts/recent
+router.get("/recent", async (req, res) => {
+  try {
+    const posts = await Post.find()
+      .populate("authorId")
+      .sort({ createdAt: -1 })
+      .limit(3);
+
+    res.status(200).json(posts);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch recent posts",
+      error: error.message,
+    });
+  }
+});
 
 // GET /posts
-router.get("/", (req, res) => {
-  res.status(200).json(blogPosts);
+router.get("/", async (req, res) => {
+  try {
+const posts = await Post.find().populate("authorId");    res.status(200).json(posts);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch posts",
+      error: error.message,
+    });
+  }
 });
 
 // GET /posts/:id
-router.get("/:id", (req, res) => {
-  const id = Number(req.params.id);
+router.get("/:id", async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
 
-  const post = blogPosts.find((post) => post.id === id);
+    if (!post) {
+      return res.status(404).json({
+        message: "Post not found",
+      });
+    }
 
-  if (!post) {
-    return res.status(404).json({
-      message: "Post not found",
+    res.status(200).json(post);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch post",
+      error: error.message,
     });
   }
-
-  res.status(200).json(post);
 });
 
 // POST /posts
-router.post("/", (req, res) => {
-  const { title, content, author } = req.body;
+router.post("/", async (req, res) => {
+  try {
+    const { title, content, authorId } = req.body;
 
-  const newPost = {
-    id: blogPosts.length + 1,
-    title,
-    content,
-    author,
-  };
+    const newPost = await Post.create({
+      title,
+      content,
+      authorId,
+    });
 
-  blogPosts.push(newPost);
-
-  res.status(201).json({
-    message: "Post created successfully",
-    post: newPost,
-  });
+    res.status(201).json({
+      message: "Post created successfully",
+      post: newPost,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to create post",
+      error: error.message,
+    });
+  }
 });
 
 // PUT /posts/:id
-router.put("/:id", (req, res) => {
-  const id = Number(req.params.id);
+router.put("/:id", async (req, res) => {
+  try {
+    const { title, content } = req.body;
 
-  const post = blogPosts.find((post) => post.id === id);
+    const post = await Post.findByIdAndUpdate(
+      req.params.id,
+      { title, content },
+      { new: true, runValidators: true }
+    );
 
-  if (!post) {
-    return res.status(404).json({
-      message: "Post not found",
+    if (!post) {
+      return res.status(404).json({
+        message: "Post not found",
+      });
+    }
+
+    res.status(200).json({
+      message: "Post updated successfully",
+      post,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to update post",
+      error: error.message,
     });
   }
-
-  const { title, content, author } = req.body;
-
-  post.title = title;
-  post.content = content;
-  post.author = author;
-
-  res.status(200).json({
-    message: "Post updated successfully",
-    post,
-  });
 });
 
 // DELETE /posts/:id
-router.delete("/:id", (req, res) => {
-  const id = Number(req.params.id);
+router.delete("/:id", async (req, res) => {
+  try {
+    const deletedPost = await Post.findByIdAndDelete(req.params.id);
 
-  const postIndex = blogPosts.findIndex((post) => post.id === id);
+    if (!deletedPost) {
+      return res.status(404).json({
+        message: "Post not found",
+      });
+    }
 
-  if (postIndex === -1) {
-    return res.status(404).json({
-      message: "Post not found",
+    res.status(200).json({
+      message: "Post deleted successfully",
+      post: deletedPost,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to delete post",
+      error: error.message,
     });
   }
-
-  const deletedPost = blogPosts.splice(postIndex, 1);
-
-  res.status(200).json({
-    message: "Post deleted successfully",
-    post: deletedPost[0],
-  });
 });
 
 module.exports = router;
