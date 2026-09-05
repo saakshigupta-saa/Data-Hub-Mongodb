@@ -59,7 +59,7 @@ data-hub/
 Clone the repository and move into the project directory:
 
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/saakshigupta-saa/Data-Hub-Mongodb
 cd data-hub
 ```
 
